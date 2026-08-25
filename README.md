@@ -1,2 +1,2 @@
 # Art-Link
-A platform for
+A Platform for Independent Artists 
