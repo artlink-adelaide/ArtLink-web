@@ -141,3 +141,21 @@ dist
 vite.config.js.timestamp-*
 vite.config.ts.timestamp-*
 .vite/
+
+# --- ArtLink: Next.js / Vercel / Supabase ---
+
+# Next.js generated type shim (regenerated on every build)
+next-env.d.ts
+
+# Vercel
+.vercel
+
+# Supabase CLI local state
+supabase/.temp/
+supabase/.branches/
+
+# macOS
+.DS_Store
+
+# Certificates
+*.pem

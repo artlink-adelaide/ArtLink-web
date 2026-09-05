@@ -1,0 +1,70 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  web:
+    name: Lint, typecheck, test, build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+
+      - run: npm ci
+
+      - name: Lint
+        run: npm run lint
+
+      - name: Typecheck
+        run: npm run typecheck
+
+      - name: Test
+        run: npm test
+
+      - name: Build
+        run: npm run build
+        env:
+          # Build-time placeholders. Real values live in Vercel project settings.
+          NEXT_PUBLIC_SUPABASE_URL: https://placeholder.supabase.co
+          NEXT_PUBLIC_SUPABASE_ANON_KEY: placeholder-anon-key
+          NEXT_PUBLIC_SITE_URL: http://localhost:3000
+
+  database:
+    name: Migrations lint
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Check for migrations
+        id: check
+        run: |
+          if [ -n "$(ls -A supabase/migrations 2>/dev/null)" ]; then
+            echo "present=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "present=false" >> "$GITHUB_OUTPUT"
+            echo "No migrations yet - skipping." >> "$GITHUB_STEP_SUMMARY"
+          fi
+
+      - uses: supabase/setup-cli@v1
+        if: steps.check.outputs.present == 'true'
+        with:
+          version: latest
+
+      - name: Start local Supabase
+        if: steps.check.outputs.present == 'true'
+        run: supabase start
+
+      - name: Lint migrations
+        if: steps.check.outputs.present == 'true'
+        run: supabase db lint --level warning
