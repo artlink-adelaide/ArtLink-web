@@ -38,7 +38,16 @@ export function stackConfig(): StackConfig {
     });
   } catch {
     // Local kepler-vps shells need the docker group via sg(1).
-    out = execSync('sg docker -c "supabase status -o env"', { encoding: "utf8" });
+    try {
+      out = execSync('sg docker -c "supabase status -o env"', { encoding: "utf8" });
+    } catch {
+      throw new Error(
+        "tests/access needs a running local Supabase stack and a readable" +
+          " `supabase status`. Start it (supabase start / ~/bin/artlink-up)" +
+          " and run `npm run test:access` — the CI invariants job provides" +
+          " both on GitHub Actions.",
+      );
+    }
   }
   const kv: Record<string, string> = {};
   for (const m of out.matchAll(/^([A-Z_]+)=(.*)$/gm)) {
