@@ -14,7 +14,9 @@
     "db:start": "supabase start",
     "db:reset": "supabase db reset",
     "db:lint": "supabase db lint",
-    "db:types": "supabase gen types typescript --local > src/types/database.ts"
+    "db:types": "supabase gen types typescript --local > src/types/database.ts",
+    "test:access": "vitest run tests/access",
+    "test:access:redgreen": "node scripts/access-matrix.mjs"
   },
   "dependencies": {
     "@supabase/ssr": "^0.12.6",
@@ -28,6 +30,7 @@
   "devDependencies": {
     "@tailwindcss/postcss": "^4",
     "@types/node": "^22.20.1",
+    "@types/pg": "^8.23.1",
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "@vitejs/plugin-react": "^6.1.1",

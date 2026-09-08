@@ -43,14 +43,16 @@ create trigger trg_portfolio_items_touch_updated_at
   before update on public.portfolio_items
   for each row execute function public.touch_updated_at ();
 
--- "空值不允许发布": a portfolio item cannot flip to published while any
--- of its media lacks alt text. Enforced here so no client can bypass it.
+-- "空值不允许发布": a published portfolio item must have alt text on
+-- every media row. Two doors are guarded: flipping an item to
+-- published (insert or update), and attaching/updating media on an
+-- already-published item. No client path can bypass both.
 create function public.portfolio_items_publish_guard () returns trigger
 language plpgsql
 set search_path = ''
 as $$
 begin
-  if new.published and old.published is distinct from true then
+  if new.published then
     if exists (
       select 1 from public.media_assets m
       where m.portfolio_item_id = new.id
@@ -58,12 +60,37 @@ begin
     ) then
       raise exception 'cannot publish portfolio item: media alt_text missing';
     end if;
-    new.published_at := coalesce(old.published_at, now ());
+    if old.published is distinct from true then
+      new.published_at := coalesce(old.published_at, now ());
+    end if;
   end if;
   return new;
 end;
 $$;
 
 create trigger trg_portfolio_items_publish_guard
-  before update of published on public.portfolio_items
+  before insert or update of published on public.portfolio_items
   for each row execute function public.portfolio_items_publish_guard ();
+
+create function public.media_assets_alt_text_guard () returns trigger
+language plpgsql
+set search_path = ''
+as $$
+declare
+  v_published boolean;
+begin
+  if new.alt_text is null or btrim(new.alt_text) = '' then
+    select published into v_published
+    from public.portfolio_items
+    where id = new.portfolio_item_id;
+    if v_published then
+      raise exception 'media on a published item requires alt_text';
+    end if;
+  end if;
+  return new;
+end;
+$$;
+
+create trigger trg_media_assets_alt_text_guard
+  before insert or update of alt_text, portfolio_item_id on public.media_assets
+  for each row execute function public.media_assets_alt_text_guard ();

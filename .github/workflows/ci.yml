@@ -66,6 +66,9 @@ jobs:
       - name: Check invariants
         run: npm run check:invariants
 
+      - name: Access-rule tests (RLS + storage, per-user clients)
+        run: npm run test:access
+
   database:
     name: Migrations lint
     runs-on: ubuntu-latest
