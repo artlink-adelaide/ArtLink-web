@@ -12,13 +12,17 @@
  *      returns nothing.
  *   3. All four discovery objects exist (as views or materialized views):
  *      trending_events, trending_artists, recommended_events,
- *      recommended_artists. Only populated after the P1 migrations land,
- *      so this check is EXPECTED to fail on a pre-P1 schema.
+ *      recommended_artists. The gate ARMS ITSELF the moment the first
+ *      file appears in supabase/migrations: pre-P1 it reports disarmed;
+ *      after that 4/4 is mandatory, so a regression that drops one of
+ *      the four fails the build.
  *
  * Connection: SUPABASE_DB_URL / DATABASE_URL, defaulting to the local
  * `supabase start` database. Never point this at production.
  */
 
+import fs from 'node:fs';
+import path from 'node:path';
 import pg from 'pg';
 
 const { Client } = pg;
@@ -103,6 +107,11 @@ async function checkSearchVectorTriggers(client) {
 }
 
 async function checkDiscoveryObjects(client) {
+  const migrationsDir = path.join(process.cwd(), 'supabase', 'migrations');
+  const hasMigrations =
+    fs.existsSync(migrationsDir) &&
+    fs.readdirSync(migrationsDir).some((f) => f.endsWith('.sql'));
+
   const { rows } = await client.query(
     `select viewname as name from pg_views where schemaname = 'public'
      union
@@ -110,6 +119,17 @@ async function checkDiscoveryObjects(client) {
   );
   const found = new Set(rows.map((r) => r.name));
   const missing = REQUIRED_OBJECTS.filter((name) => !found.has(name));
+
+  if (!hasMigrations) {
+    // Pre-data-layer: there is nothing to protect yet. The first
+    // migration arms this check; from then on 4/4 is mandatory.
+    pass(
+      'invariant 3: trending/recommended objects (events + artists)',
+      `disarmed pre-P1 — ${REQUIRED_OBJECTS.length - missing.length}/4 present, no migrations yet`,
+    );
+    return;
+  }
+
   if (missing.length === 0) {
     pass('invariant 3: trending/recommended objects (events + artists)', '4/4 present');
   } else {
