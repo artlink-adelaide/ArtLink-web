@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
+import { SiteHeader } from "@/components/site-header";
 import "../lib/env";
 import "./globals.css";
 
@@ -18,29 +19,13 @@ export const metadata: Metadata = {
   description: "Showcase and collaboration platform for South Australian independent artists.",
 };
 
-function SiteHeader() {
-  return (
-    <header className="border-b border-line bg-surface">
-      <div className="mx-auto flex h-14 w-full max-w-5xl items-center justify-between px-4">
-        <span className="text-lg font-semibold tracking-tight text-brand-700">
-          ArtLink
-        </span>
-        <nav aria-label="Primary" className="flex items-center gap-4 text-sm text-muted">
-          <span>Discover</span>
-          <span>Artists</span>
-          <span>Events</span>
-        </nav>
-      </div>
-    </header>
-  );
-}
 
 function SiteFooter() {
   return (
     <footer className="border-t border-line bg-surface">
       <div className="mx-auto flex w-full max-w-5xl flex-col gap-1 px-4 py-6 text-sm text-muted sm:flex-row sm:items-center sm:justify-between">
         <span>ArtLink — South Australian independent artists</span>
-        <span>Foundation in progress (P0). No accounts, no uploads yet.</span>
+        <span>Accounts live here since P2. Media and events arrive in later stages.</span>
       </div>
     </footer>
   );
