@@ -12,7 +12,7 @@ import { env } from "../env";
  * a mutable response.
  *
  * Permission decisions MUST go through supabase.auth.getUser() (server
- * verified). Never decide authorization from getSession() — it only
+ * verified). Never decide authorization from the local session snapshot — it only
  * decodes the local cookie.
  */
 export async function createSupabaseServerClient() {

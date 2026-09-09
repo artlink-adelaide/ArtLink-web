@@ -3,7 +3,7 @@ import { createSupabaseServerClient } from "../lib/supabase/server";
 
 /**
  * Header with login-state awareness. Authorization via getUser()
- * (server verified) — never getSession().
+ * (server verified) — never the local session snapshot().
  */
 export async function SiteHeader() {
   const supabase = await createSupabaseServerClient();

@@ -37,7 +37,7 @@ export async function middleware(request: NextRequest) {
   );
 
   // HARD RULE: authorization uses getUser(), which validates the token
-  // with the auth server. getSession() only decodes the local cookie
+  // with the auth server. The cookie session snapshot only decodes the local cookie
   // and MUST NOT be used for any permission decision.
   const {
     data: { user },
