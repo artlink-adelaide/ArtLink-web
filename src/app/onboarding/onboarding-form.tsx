@@ -22,17 +22,17 @@ export function OnboardingForm({
   const [availability, setAvailability] = useState<"idle" | "checking" | "free" | "taken">(
     "idle",
   );
+  // Derived at render: when the handle violates the shape rules we
+  // never even query — and we avoid synchronous setState in the effect
+  // (react-hooks/set-state-in-effect).
+  const problem = handleProblem(handle);
 
   // 边输边查重: debounce 300ms, then ask the SECURITY DEFINER RPC as
   // the anonymous public would — never by reading the profiles table.
   useEffect(() => {
-    const problem = handleProblem(handle);
-    if (problem) {
-      setAvailability("idle");
-      return;
-    }
-    setAvailability("checking");
+    if (problem) return;
     const timer = setTimeout(async () => {
+      setAvailability("checking");
       const supabase = createSupabaseBrowserClient();
       const { data, error } = await supabase.rpc("handle_available", { p_handle: handle });
       if (error) {
@@ -42,7 +42,7 @@ export function OnboardingForm({
       setAvailability(data === true ? "free" : "taken");
     }, 300);
     return () => clearTimeout(timer);
-  }, [handle]);
+  }, [handle, problem]);
 
   return (
     <form action={formAction} className="flex w-full max-w-sm flex-col gap-4">
@@ -90,14 +90,14 @@ export function OnboardingForm({
       <p
         aria-live="polite"
         className={`text-xs ${
-          availability === "taken"
+          !problem && availability === "taken"
             ? "text-red-600"
-            : availability === "free"
+            : !problem && availability === "free"
               ? "text-green-700"
               : "text-muted"
         }`}
       >
-        {handleProblem(handle) ??
+        {problem ??
           (availability === "checking"
             ? "查询中…"
             : availability === "free"
