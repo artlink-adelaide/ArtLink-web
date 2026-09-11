@@ -2,7 +2,7 @@ import { redirect } from "next/navigation";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { OnboardingForm } from "./onboarding-form";
 
-export const metadata = { title: "完成引导 — ArtLink" };
+export const metadata = { title: "完成引导 — Lightsquare" };
 
 export default async function OnboardingPage() {
   const supabase = await createSupabaseServerClient();

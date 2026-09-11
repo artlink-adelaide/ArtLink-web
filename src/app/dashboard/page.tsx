@@ -1,7 +1,7 @@
 import { redirect } from "next/navigation";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 
-export const metadata = { title: "Dashboard — ArtLink" };
+export const metadata = { title: "Dashboard — Lightsquare" };
 
 const EMPTY_SECTIONS = [
   { title: "作品", hint: "你还没有发布任何作品。作品集功能将在后续阶段开放。" },

@@ -15,7 +15,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "ArtLink",
+  title: "Lightsquare",
   description: "Showcase and collaboration platform for South Australian independent artists.",
 };
 
@@ -24,7 +24,7 @@ function SiteFooter() {
   return (
     <footer className="border-t border-line bg-surface">
       <div className="mx-auto flex w-full max-w-5xl flex-col gap-1 px-4 py-6 text-sm text-muted sm:flex-row sm:items-center sm:justify-between">
-        <span>ArtLink — South Australian independent artists</span>
+        <span>Lightsquare — South Australian independent artists</span>
         <span>Accounts live here since P2. Media and events arrive in later stages.</span>
       </div>
     </footer>

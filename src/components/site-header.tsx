@@ -25,7 +25,7 @@ export async function SiteHeader() {
     <header className="border-b border-line bg-surface">
       <div className="mx-auto flex h-14 w-full max-w-5xl items-center justify-between px-4">
         <Link href="/" className="text-lg font-semibold tracking-tight text-brand-700">
-          ArtLink
+          Lightsquare
         </Link>
         <nav aria-label="Primary" className="flex items-center gap-4 text-sm text-muted">
           <span>Discover</span>

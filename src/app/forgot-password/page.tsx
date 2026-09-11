@@ -1,6 +1,6 @@
 import { ForgotPasswordForm } from "./forgot-password-form";
 
-export const metadata = { title: "重置密码 — ArtLink" };
+export const metadata = { title: "重置密码 — Lightsquare" };
 
 export default function ForgotPasswordPage() {
   return (

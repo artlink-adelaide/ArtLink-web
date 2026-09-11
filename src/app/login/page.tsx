@@ -1,6 +1,6 @@
 import { LoginForm } from "./login-form";
 
-export const metadata = { title: "登录 — ArtLink" };
+export const metadata = { title: "登录 — Lightsquare" };
 
 export default async function LoginPage({
   searchParams,
@@ -13,7 +13,7 @@ export default async function LoginPage({
 
   return (
     <main className="mx-auto flex w-full max-w-5xl flex-col items-center gap-6 px-4 py-12">
-      <h1 className="text-2xl font-semibold">登录 ArtLink</h1>
+      <h1 className="text-2xl font-semibold">登录 Lightsquare</h1>
       <LoginForm nextPath={nextPath} />
     </main>
   );

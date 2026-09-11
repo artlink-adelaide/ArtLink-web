@@ -1,6 +1,6 @@
 import { ResetPasswordForm } from "./reset-password-form";
 
-export const metadata = { title: "设置新密码 — ArtLink" };
+export const metadata = { title: "设置新密码 — Lightsquare" };
 
 export default function ResetPasswordPage() {
   return (
