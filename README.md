@@ -47,7 +47,7 @@ echo 'export PATH="/opt/homebrew/opt/node@22/bin:$PATH"' >> ~/.zshrc
 ## Setup
 
 ```bash
-git clone https://github.com/artlink-adelaide/Lightsquare-web.git
+git clone https://github.com/lightsquare-adelaide/Lightsquare-web.git
 cd Lightsquare-web
 
 nvm use                 # or ensure node -v reports v22.x
