@@ -1,4 +1,4 @@
-# Art-Link
+# Lightsquare
 
 A Platform for Independent Artists — a collaborative showcasing platform for
 independent artists in South Australia.
@@ -8,7 +8,7 @@ Group C262T-4103 · Client: Creative Professionals Network SA
 ## Scope
 
 This repository implements **Section 3.1 (confirmed client requirements)** of the
-ArtLink Adelaide Project Proposal (final draft):
+Lightsquare Adelaide Project Proposal (final draft):
 
 - A public discovery homepage requiring no sign-in, showing global trending
   artists and events.
@@ -47,8 +47,8 @@ echo 'export PATH="/opt/homebrew/opt/node@22/bin:$PATH"' >> ~/.zshrc
 ## Setup
 
 ```bash
-git clone https://github.com/artlink-adelaide/ArtLink-web.git
-cd ArtLink-web
+git clone https://github.com/lightsquare-adelaide/Lightsquare-web.git
+cd Lightsquare-web
 
 nvm use                 # or ensure node -v reports v22.x
 npm ci

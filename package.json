@@ -1,5 +1,5 @@
 {
-  "name": "artlink-web",
+  "name": "lightsquare-web",
   "version": "0.1.0",
   "private": true,
   "scripts": {
@@ -8,7 +8,7 @@
     "start": "next start",
     "lint": "eslint",
     "typecheck": "next typegen && tsc --noEmit",
-    "test": "vitest run --exclude \"tests/access/**\"",
+    "test": "vitest run --exclude \"tests/access/**\" --exclude \"tests/payments/**\"",
     "test:watch": "vitest",
     "check:invariants": "node scripts/check-invariants.mjs",
     "db:start": "supabase start",
@@ -16,7 +16,8 @@
     "db:lint": "supabase db lint",
     "db:types": "supabase gen types typescript --local > src/types/database.ts",
     "test:access": "vitest run tests/access",
-    "test:access:redgreen": "node scripts/access-matrix.mjs"
+    "test:access:redgreen": "node scripts/access-matrix.mjs",
+    "test:payments": "vitest run tests/payments"
   },
   "dependencies": {
     "@supabase/ssr": "^0.12.6",

@@ -85,6 +85,15 @@ jobs:
             echo "No migrations yet - skipping." >> "$GITHUB_STEP_SUMMARY"
           fi
 
+      - uses: actions/setup-node@v4
+        if: steps.check.outputs.present == 'true'
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+
+      - run: npm ci
+        if: steps.check.outputs.present == 'true'
+
       - uses: supabase/setup-cli@v1
         if: steps.check.outputs.present == 'true'
         with:
@@ -97,3 +106,8 @@ jobs:
       - name: Lint migrations
         if: steps.check.outputs.present == 'true'
         run: supabase db lint --level warning
+
+      # Excluded from `npm test` because they need this running stack.
+      - name: Payment-path tests
+        if: steps.check.outputs.present == 'true'
+        run: npm run test:payments

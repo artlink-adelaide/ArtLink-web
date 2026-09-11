@@ -5,7 +5,7 @@ export default function Home() {
         South Australian independent artists
       </p>
       <h1 className="max-w-xl text-4xl font-semibold leading-tight tracking-tight">
-        ArtLink foundation is being laid.
+        Lightsquare foundation is being laid.
       </h1>
       <p className="max-w-xl text-lg leading-8 text-muted">
         Discovery, portfolios, events, and bookings arrive in later stages.
