@@ -123,12 +123,53 @@ export function appBase(): string {
 
 let app: { close: () => Promise<void> } | null = null;
 
-/** Builds (when needed) and starts `next start`, waits until it serves. */
+/** Build inputs, newest mtime wins. Directories are walked recursively. */
+const BUILD_INPUTS = [
+  "src",
+  "next.config.ts",
+  "package.json",
+  "tsconfig.json",
+  "postcss.config.mjs",
+];
+
+/** Newest mtime (ms) across everything `next build` consumes. */
+function newestInputMtime(root: string): number {
+  let newest = 0;
+  const visit = (target: string): void => {
+    let stat: fs.Stats;
+    try {
+      stat = fs.statSync(target);
+    } catch {
+      return; // optional input, absent in this tree
+    }
+    if (stat.isDirectory()) {
+      for (const entry of fs.readdirSync(target)) {
+        visit(path.join(target, entry));
+      }
+      return;
+    }
+    if (stat.mtimeMs > newest) newest = stat.mtimeMs;
+  };
+  for (const input of BUILD_INPUTS) visit(path.join(root, input));
+  return newest;
+}
+
+/** Builds (when stale) and starts `next start`, waits until it serves. */
 export async function startApp(): Promise<{ close: () => Promise<void> }> {
   if (app) return app;
   const root = process.cwd();
 
-  if (!fs.existsSync(path.join(root, ".next", "BUILD_ID"))) {
+  // An existing build is reused ONLY if it is newer than every build
+  // input. The check here used to be `existsSync(BUILD_ID)`, which
+  // silently served whatever .next happened to hold from an earlier run:
+  // `npm run test:auth` would then verify code that was no longer in the
+  // working tree, and report green. That is how the /onboarding redirect
+  // loop survived a red-green check — reverting the fix still passed,
+  // because the stale build still contained it. Equal mtimes rebuild:
+  // a build is only trusted if it is strictly newer than its inputs.
+  const buildId = path.join(root, ".next", "BUILD_ID");
+  const builtAt = fs.existsSync(buildId) ? fs.statSync(buildId).mtimeMs : 0;
+  if (builtAt <= newestInputMtime(root)) {
     execSync("npx next build", {
       cwd: root,
       stdio: "inherit",
