@@ -46,6 +46,7 @@ export async function middleware(request: NextRequest) {
   const path = request.nextUrl.pathname;
   const isProtected = PROTECTED_PREFIXES.some((p) => path.startsWith(p));
   const isPublicAuthPage = PUBLIC_PREFIXES.some((p) => path.startsWith(p));
+  const isOnboarding = path.startsWith("/onboarding");
 
   if (isPublicAuthPage && user) {
     const url = request.nextUrl.clone();
@@ -76,7 +77,11 @@ export async function middleware(request: NextRequest) {
     .eq("id", user.id)
     .maybeSingle();
 
-  if (profile == null || profile.category_id == null) {
+  // `isOnboarding` is what stops this from looping: /onboarding is itself
+  // protected, so without it an un-onboarded user requesting /onboarding
+  // would be redirected to /onboarding forever and could never reach the
+  // form. The page handles the opposite case (complete profile -> dashboard).
+  if ((profile == null || profile.category_id == null) && !isOnboarding) {
     // `next` marks this redirect as middleware-made; test:auth asserts
     // it so removing the middleware gate turns the suite red even
     // though pages carry their own defense-in-depth redirects.

@@ -45,6 +45,21 @@ describe("P2 — middleware route protection (real Next server, real RLS)", () =
     expect(res.headers.get("location") ?? "").toContain("next=%2Fdashboard");
   });
 
+  // Regression: /onboarding is itself in PROTECTED_PREFIXES, so the
+  // un-onboarded branch used to redirect /onboarding -> /onboarding and
+  // loop, leaving the form unreachable and signup impossible. The rest of
+  // this suite only ever requested /dashboard with redirect:"manual", and
+  // the harness completes onboarding with a direct DB write, so nothing
+  // exercised this path. Asserting a 200 here is what keeps it closed.
+  it("un-onboarded user reaches the onboarding form itself, not a redirect loop", async () => {
+    const cookie = await sessionCookieHeader(fresh.email, fresh.password);
+    const res = await fetch(`${appBase()}/onboarding`, {
+      headers: { cookie },
+      redirect: "manual",
+    });
+    expect(res.status).toBe(200);
+  });
+
   it("onboarded user gets the dashboard (200)", async () => {
     const cookie = await sessionCookieHeader(onboarded.email, onboarded.password);
     const res = await fetch(`${appBase()}/dashboard`, {
